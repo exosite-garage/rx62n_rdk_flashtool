@@ -53,9 +53,11 @@ typedef struct {
 
 typedef struct {
   char NU[RDK_MB_NOT_USE_SIZE];             
-  char MAC[RDK_MAC_SIZE];                   // MAC address
+  char MAC[RDK_MAC_SIZE];                   // MAC address 
   char MT[RDK_MB_TAIL_SIZE];                
 } rdk_mac_block;
+
+#define RDK_MAC_READ      0x00107FF2
 
 #define EXOMARK "exosite!"
 
@@ -66,5 +68,3 @@ unsigned char rdk_mac_write(unsigned char * mac_buffer);
 void rdk_write_data_flash(unsigned char * writeBuffer, unsigned short numBytes, unsigned long writeAddress);
 
 #endif /* __RDK_META_H__ */
-
-

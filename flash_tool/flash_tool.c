@@ -26,7 +26,7 @@ const unsigned char NEW_MAC[6] = {0x00,0x30,0x55,0x08,0x00,0x00};
 const unsigned char blank[6] = {0xFF,0xFF,0xFF,0xFF,0xFF,0xFF};
 
 //Globals
-static bool menu_selected = false; 
+static bool menu_selected = false;
 static uint8_t menu_index = 0;
 extern volatile uint8_t gSwitchFlag;
 
@@ -42,9 +42,34 @@ void binToLCD(unsigned char * ptrFlash, uint8_t lcdLine);
 *============================================================================*/
 void initFlashMenu(void)
 {
+  int i=0;
+  unsigned char *r_mac;
   menu_selected = false;
   menu_index = 0;
+   /* Display MAC & Exosit CIK status */
+  DisplayLCD(LCD_LINE1, "MAC!        ");
+  DisplayLCD(LCD_LINE2, "            ");
+  DisplayLCD(LCD_LINE4, "Exosite Meta!");
 
+  if(rdk_cik_check() >0)
+    DisplayLCD(LCD_LINE5, "CIK found.  ");
+  else
+    DisplayLCD(LCD_LINE5, "None  ");
+
+  r_mac = (unsigned char *) RDK_MAC_READ;
+  binToLCD(r_mac, LCD_LINE2);
+  while (i<0x03FFFFFF)
+   i++;
+
+  /* Display instructions onto the LCD */
+  DisplayLCD(LCD_LINE1, "1.Clear MAC ");
+  DisplayLCD(LCD_LINE2, "2.Set MAC   ");
+  DisplayLCD(LCD_LINE3, "3.Clear Meta");
+  DisplayLCD(LCD_LINE4, "            ");
+  DisplayLCD(LCD_LINE5, "            ");
+  DisplayLCD(LCD_LINE7, " SW1: Select");
+  DisplayLCD(LCD_LINE8, " SW2: Go");
+  
   /* Configure switch callback function */
   SetSwitchReleaseCallback(menuCallBack);
 }
@@ -107,12 +132,12 @@ void updateFlash(uint8_t cmd)
   switch(cmd)
   {
     case 1:
-      rdk_mac_write(&blank[0]);
+      rdk_mac_write((unsigned char *)&blank[0]);
       DisplayLCD(LCD_LINE5,"MAC Cleared");
-      binToLCD((unsigned char *)(MAC_LOCATION + 2), LCD_LINE6);   
+      binToLCD((unsigned char *)(MAC_LOCATION + 2), LCD_LINE6);
       break;
     case 2:
-      rdk_mac_write(&NEW_MAC[0]);
+      rdk_mac_write((unsigned char *)&NEW_MAC[0]);
       DisplayLCD(LCD_LINE5, "MAC Set:");
       binToLCD((unsigned char *)(MAC_LOCATION + 2), LCD_LINE6);
       break;

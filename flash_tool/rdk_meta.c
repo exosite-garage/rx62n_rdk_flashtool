@@ -179,4 +179,29 @@ unsigned char rdk_mac_write(unsigned char * mac_buffer) //, unsigned short srcBy
   return 0;
 }
 
+unsigned char rdk_cik_check(void)
+{
+  rdk_meta *meta_info;
+  char cik[40];
+  uint8_t i;
+  rdk_meta_init();
+  meta_info = (rdk_meta *)RDK_META_LOCATION;
 
+  //check our meta structure. if it is hosed, we initialize
+  //with defaults and continue
+  if (strcmp(meta_info->mark,EXOMARK)) {
+    rdk_meta_defaults();
+    memset(cik, 0x00, 40);
+    return 0;
+  } else strncpy(cik, meta_info -> cik, 40);
+
+  for (i = 0;i < 40;i++)
+  {
+    if (cik[i]!=0)
+    {
+      return 1;
+    }
+  }
+
+  return 0;
+}
